@@ -1,0 +1,265 @@
+{
+  "id": "gJ9SKXuB8MYYj6A2",
+  "name": "PH Daily Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "58 23 * * *"
+            }
+          ]
+        },
+        "options": {
+          "timezone": "America/Los_Angeles"
+        }
+      },
+      "id": "node-1",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const now = new Date();\nconst yesterday = new Date(now);\nyesterday.setUTCDate(now.getUTCDate() - 1);\nconst year = yesterday.getUTCFullYear();\nconst month = String(yesterday.getUTCMonth() + 1).padStart(2, '0');\nconst day = String(yesterday.getUTCDate()).padStart(2, '0');\nconst postedAfter = `${year}-${month}-${day}T00:00:00Z`;\nconst postedBefore = `${year}-${month}-${day}T23:59:59Z`;\nconst dateLabel = `${year}-${month}-${day}`;\nreturn [{ json: { postedAfter, postedBefore, dateLabel } }];"
+      },
+      "id": "node-2",
+      "name": "Build Date Range",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.producthunt.com/v2/api/graphql",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ query: `{ posts(order: VOTES, postedAfter: \"${$json.postedAfter}\", postedBefore: \"${$json.postedBefore}\", first: 20) { edges { node { id name slug tagline description website url votesCount commentsCount reviewsRating createdAt featuredAt thumbnail { url } user { name headline username twitterUsername } makers { name headline username twitterUsername } topics { edges { node { name slug } } } } } } }` }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "node-3",
+      "name": "PH GraphQL API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "efCQk1o6M3k4Li1B",
+          "name": "Product Hunt API"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input = $input.all();\nconst data = input[0].json;\nconst dateLabel = $('Build Date Range').first().json.dateLabel;\n\nconst edges = data?.data?.posts?.edges || [];\nconst products = edges.map(edge => {\n  const p = edge.node;\n  return {\n    id: p.id, name: p.name, slug: p.slug,\n    tagline: p.tagline, description: p.description,\n    website: p.website,\n    url: p.url || `https://www.producthunt.com/posts/${p.slug}`,\n    votesCount: p.votesCount || 0,\n    commentsCount: p.commentsCount || 0,\n    reviewsRating: p.reviewsRating || 0,\n    createdAt: p.createdAt, featuredAt: p.featuredAt,\n    thumbnail: p.thumbnail?.url || '',\n    maker: p.user ? { name: p.user.name, headline: p.user.headline, username: p.user.username, twitter: p.user.twitterUsername } : null,\n    makers: (p.makers || []).map(m => ({ name: m.name, headline: m.headline, username: m.username, twitter: m.twitterUsername })),\n    topics: (p.topics?.edges || []).map(t => t.node.name)\n  };\n});\n\nproducts.sort((a, b) => b.votesCount - a.votesCount);\nconst top15 = products.slice(0, 15);\n\nconst aiInput = top15.map((p, i) => {\n  const makers = p.makers.map(m => m.name).join(', ') || (p.maker?.name || 'Unknown');\n  return `#${i + 1} ${p.name} | ${p.votesCount}票 ${p.commentsCount}评 | ${p.tagline} | ${p.description || ''} | Topics: ${p.topics.join(', ') || 'N/A'} | Makers: ${makers} | ${p.url}`;\n}).join('\\n');\n\nconst rankingList = top15.map((p, i) => {\n  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `\\`${String(i + 1).padStart(2)}\\``;\n  return `${medal} **[${p.name}](${p.url})** · 🔺${p.votesCount}`;\n}).join('\\n');\n\nreturn [{ json: { dateLabel, totalCount: products.length, top15, allProducts: products, aiInput, rankingList } }];"
+      },
+      "id": "node-4",
+      "name": "Process & Rank",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const fs = require('fs');\nconst path = require('path');\nconst { dateLabel, allProducts, totalCount, top15, aiInput, rankingList } = $input.first().json;\nconst dir = '/data/ph-monitor';\nif (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });\nconst filePath = path.join(dir, `ph-raw-${dateLabel}.json`);\nfs.writeFileSync(filePath, JSON.stringify({ date: dateLabel, totalCount, products: allProducts }, null, 2), 'utf-8');\nreturn [{ json: { dateLabel, totalCount, top15, aiInput, rankingList, savedTo: filePath } }];"
+      },
+      "id": "node-5",
+      "name": "Save Raw JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-empty",
+              "leftValue": "={{ $json.totalCount }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "node-6",
+      "name": "IF isEmpty",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discord.com/api/webhooks/1474268942792134708/7gIRLXmavvP0kd2a86_lSCHE7G5LDYdmzbvWai32T-GJFHcqKqB20YV8PobjtI_eKoJe",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ username: 'PH Daily Monitor', content: '📭 **PH Daily — ' + $json.dateLabel + '** No products found yesterday.' }) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "node-7-empty",
+      "name": "Discord No Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, -200],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.deepseek.com/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'deepseek-chat', temperature: 0.7, max_tokens: 2500, messages: [{ role: 'system', content: 'You are a sharp tech product analyst writing a daily digest for indie hackers. Write in Chinese. Be extremely concise — every bullet is ONE sentence max. Use Discord markdown. When mentioning a product, always use [产品名](URL) hyperlink format.' }, { role: 'user', content: '分析 ' + $json.dateLabel + ' 的 Product Hunt 发布（共 ' + $json.totalCount + ' 个产品）。严格按以下格式输出：\\n\\n# 🚀 PH Daily — ' + $json.dateLabel + '  (' + $json.totalCount + ' products)\\n\\n（下面列出 Top 15，每个产品占一行，格式严格为：\\n奖牌/序号 **[产品名](URL)** · 🔺票数\\n一句中文说明这个产品到底是做什么的（不超过20字，让读者一眼判断是否感兴趣）\\n\\n以下是排名和链接，请在每行后面换行追加中文摘要：\\n' + $json.rankingList + '\\n\\n---\\n\\n**🔥 值得关注**\\n（从 Top 15 中挑最多 5 个最有意思的，每个一句话点评为什么值得关注，用 [产品名](URL) 格式）\\n\\n**📈 趋势信号**\\n（3-4 个 bullet，每个一句话，提炼今天的技术/市场趋势）\\n\\n**⚔️ 竞品对照**\\n（挑 3-5 个产品，各用一句话对比其成熟竞品，点明创新点和被认可的原因，格式：[新产品](URL) vs 竞品名 — 差异点）\\n\\n**🛠 Builder 启示**\\n（3-4 个 bullet，每个一句话，给独立开发者的可执行建议）\\n\\n产品原始数据（供你理解产品用途）：\\n' + $json.aiInput }] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "id": "node-7",
+      "name": "DeepSeek Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "q1i0JvA3Hc8vKiHm",
+          "name": "DeepSeek API"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const fs = require('fs');\nconst path = require('path');\nconst deepseekResponse = $input.first().json;\nconst dateLabel = $('Build Date Range').first().json.dateLabel;\nconst analysis = deepseekResponse?.choices?.[0]?.message?.content || 'Analysis unavailable.';\nconst dir = '/data/ph-monitor';\nif (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });\nconst filePath = path.join(dir, `ph-analysis-${dateLabel}.md`);\nfs.writeFileSync(filePath, analysis, 'utf-8');\nreturn [{ json: { ...deepseekResponse, savedAnalysisTo: filePath } }];"
+      },
+      "id": "node-7b",
+      "name": "Save Analysis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1430, 200]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const deepseekResponse = $input.first().json;\nconst analysis = deepseekResponse?.choices?.[0]?.message?.content || 'Analysis unavailable.';\n\nconst MAX_LEN = 1900;\nconst messages = [];\nconst paragraphs = analysis.split('\\n');\nlet currentChunk = '';\nfor (const para of paragraphs) {\n  if ((currentChunk + '\\n' + para).length > MAX_LEN) {\n    if (currentChunk.trim()) messages.push(currentChunk.trim());\n    if (para.length > MAX_LEN) {\n      let remaining = para;\n      while (remaining.length > MAX_LEN) {\n        messages.push(remaining.substring(0, MAX_LEN));\n        remaining = remaining.substring(MAX_LEN);\n      }\n      currentChunk = remaining;\n    } else {\n      currentChunk = para;\n    }\n  } else {\n    currentChunk += (currentChunk ? '\\n' : '') + para;\n  }\n}\nif (currentChunk.trim()) messages.push(currentChunk.trim());\nmessages.push(`-# 🤖 PH Daily Monitor · DeepSeek`);\nreturn messages.map(content => ({ json: { content } }));"
+      },
+      "id": "node-8",
+      "name": "Format Discord Messages",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discord.com/api/webhooks/1474268942792134708/7gIRLXmavvP0kd2a86_lSCHE7G5LDYdmzbvWai32T-GJFHcqKqB20YV8PobjtI_eKoJe",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ username: 'PH Daily Monitor', content: $json.content }) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1000
+            }
+          },
+          "timeout": 10000
+        }
+      },
+      "id": "node-9",
+      "name": "Discord Webhook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1870, 200],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 5000
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [[{ "node": "Build Date Range", "type": "main", "index": 0 }]]
+    },
+    "Build Date Range": {
+      "main": [[{ "node": "PH GraphQL API", "type": "main", "index": 0 }]]
+    },
+    "PH GraphQL API": {
+      "main": [[{ "node": "Process & Rank", "type": "main", "index": 0 }]]
+    },
+    "Process & Rank": {
+      "main": [[{ "node": "Save Raw JSON", "type": "main", "index": 0 }]]
+    },
+    "Save Raw JSON": {
+      "main": [[{ "node": "IF isEmpty", "type": "main", "index": 0 }]]
+    },
+    "IF isEmpty": {
+      "main": [
+        [{ "node": "Discord No Data", "type": "main", "index": 0 }],
+        [{ "node": "DeepSeek Analysis", "type": "main", "index": 0 }]
+      ]
+    },
+    "DeepSeek Analysis": {
+      "main": [[{ "node": "Save Analysis", "type": "main", "index": 0 }]]
+    },
+    "Save Analysis": {
+      "main": [[{ "node": "Format Discord Messages", "type": "main", "index": 0 }]]
+    },
+    "Format Discord Messages": {
+      "main": [[{ "node": "Discord Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Shanghai",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true
+  },
+  "tags": [
+    { "name": "product-hunt" },
+    { "name": "daily-monitor" }
+  ]
+}
