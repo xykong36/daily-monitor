@@ -572,14 +572,17 @@ function regenerateIndex() {
     return `${fmt(mon)} – ${fmt(sun)}`;
   }
 
-  const items = files.map(f => {
-    const m2 = f.match(/^(\d{4})-W(\d{2})\.html$/);
-    const label = m2 ? `${m2[1]} Week ${parseInt(m2[2])}` : f.replace('.html', '');
-    const range = weekDateRange(f);
-    return `    <li><a href="${f}"><span class="week">${label}</span><span class="date">${range}</span></a></li>`;
-  }).join('\n');
+  function buildItems(hrefPrefix) {
+    return files.map(f => {
+      const m2 = f.match(/^(\d{4})-W(\d{2})\.html$/);
+      const label = m2 ? `${m2[1]} Week ${parseInt(m2[2])}` : f.replace('.html', '');
+      const range = weekDateRange(f);
+      return `    <li><a href="${hrefPrefix}${f}"><span class="week">${label}</span><span class="date">${range}</span></a></li>`;
+    }).join('\n');
+  }
 
-  const indexHtml = `<!DOCTYPE html>
+  function buildIndexHtml(items) {
+    return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -635,10 +638,17 @@ ${items}
 </div>
 </body>
 </html>`;
+  }
 
-  const indexPath = path.join(weeklyDir, 'index.html');
-  fs.writeFileSync(indexPath, indexHtml, 'utf-8');
-  console.log(`Index regenerated: ${indexPath} (${files.length} reports)`);
+  // weekly-reports/index.html (relative links)
+  const weeklyIndexPath = path.join(weeklyDir, 'index.html');
+  fs.writeFileSync(weeklyIndexPath, buildIndexHtml(buildItems('')), 'utf-8');
+  console.log(`Index regenerated: ${weeklyIndexPath} (${files.length} reports)`);
+
+  // data/index.html (root landing page, links prefixed with weekly-reports/)
+  const rootIndexPath = path.join(dataDir, 'index.html');
+  fs.writeFileSync(rootIndexPath, buildIndexHtml(buildItems('weekly-reports/')), 'utf-8');
+  console.log(`Root index regenerated: ${rootIndexPath}`);
 }
 regenerateIndex();
 
