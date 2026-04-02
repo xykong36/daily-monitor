@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Hunt 日报 — 2026-02-25</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 15px; line-height: 1.75; color: #1c1917; background: #fafaf9;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 32px; }
+
+  /* Cover */
+  .cover { display: block; text-align: center; padding-top: 48px; padding-bottom: 32px; border-bottom: 1px solid #e7e5e4; margin-bottom: 32px; }
+  .cover h1 { font-family: Georgia, "Noto Serif SC", serif; font-size: 36px; font-weight: 700; margin-bottom: 4px; color: #1c1917; letter-spacing: -1px; }
+  .cover .accent { color: #da552f; }
+  .cover .subtitle { font-size: 15px; color: #78716c; margin-bottom: 24px; }
+  .cover .stats { display: inline-flex; gap: 40px; margin-bottom: 28px; }
+  .cover .stat { text-align: center; }
+  .cover .stat-num { font-size: 32px; font-weight: 800; color: #da552f; }
+  .cover .stat-label { font-size: 11px; color: #a8a29e; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+  .top3 { display: inline-flex; gap: 16px; max-width: 720px; }
+  .top3-card { flex: 1; background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; padding: 16px 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .top3-card .rank { font-size: 20px; margin-bottom: 6px; }
+  .top3-card img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; margin-bottom: 6px; }
+  .top3-card .name { font-family: Georgia, serif; font-size: 14px; font-weight: 600; color: #1c1917; margin-bottom: 2px; }
+  .top3-card .votes { font-size: 13px; color: #da552f; font-weight: 700; }
+  .top3-card .tagline { font-size: 12px; color: #a8a29e; margin-top: 4px; }
+
+  /* Section headers */
+  h2.section-title { font-family: Georgia, "Noto Serif SC", serif; font-size: 22px; color: #1c1917; margin-bottom: 16px; }
+  h2.section-title::after { content: ''; display: block; width: 32px; height: 3px; background: #da552f; margin-top: 8px; border-radius: 2px; }
+
+  /* Bar chart */
+  .bar-row { display: flex; align-items: center; margin-bottom: 10px; font-size: 13px; }
+  .bar-label { width: 160px; text-align: right; padding-right: 14px; font-weight: 600; color: #44403c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; background: #f5f5f4; height: 28px; border-radius: 6px; position: relative; overflow: hidden; }
+  .bar-fill { background: linear-gradient(90deg, #da552f, #f59e0b); height: 100%; border-radius: 6px; min-width: 4px; }
+  .bar-value { position: absolute; right: 10px; top: 5px; font-size: 12px; color: #78716c; font-weight: 500; }
+  .bar-top1 { margin-left: 12px; color: #a8a29e; font-size: 12px; width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-top1-label { background: #da552f; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; letter-spacing: .5px; margin-right: 4px; }
+  .bar-top1-votes { color: #da552f; font-weight: 700; font-size: 11px; margin-left: 4px; }
+
+  /* Product cards */
+  .product-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .product-card { background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; padding: 14px; display: flex; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.03); }
+  .product-card .product-icon { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+  .product-card .info { flex: 1; min-width: 0; }
+  .product-card .name { font-size: 14px; font-weight: 700; color: #1c1917; }
+  .product-card .tagline { font-size: 13px; color: #44403c; margin-top: 2px; line-height: 1.5; }
+  .product-card .votes-badge { color: #da552f; font-weight: 800; }
+
+  /* Rankings table */
+  .rank-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .rank-table th { padding: 6px 8px; text-align: left; font-size: 11px; font-weight: 600; color: #78716c; border-bottom: 2px solid #e7e5e4; text-transform: uppercase; letter-spacing: .5px; }
+  .rank-table td { padding: 5px 8px; border-bottom: 1px solid #f5f5f4; }
+  .rank-table tr:nth-child(even) { background: #fafaf9; }
+  .rank-table .r { text-align: right; }
+
+  a.product-link { color: inherit; text-decoration: none; border-bottom: 1px solid #e7e5e4; transition: border-color .15s; }
+  a.product-link:hover { border-color: #da552f; color: #da552f; }
+
+  /* AI section */
+  .ai-section { line-height: 1.8; font-size: 14px; }
+  .ai-section h3 { font-family: Georgia, serif; font-size: 18px; color: #1c1917; margin: 16px 0 8px; font-weight: 700; }
+  .ai-section p, .ai-section li { margin-bottom: 6px; color: #44403c; }
+  .ai-section ul { padding-left: 20px; }
+
+  @media screen {
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 32px;
+    }
+    .cover {
+      max-width: 960px;
+      margin: 0 auto;
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+  }
+
+  /* ── Mobile responsive ── */
+  @media screen and (max-width: 768px) {
+    body { font-size: 14px; }
+
+    .page {
+      max-width: 100%;
+      padding: 32px 16px;
+    }
+    .cover {
+      max-width: 100%;
+      padding: 60px 16px 32px;
+      min-height: auto;
+    }
+    .cover h1 { font-size: 28px; }
+    .cover .subtitle { font-size: 14px; margin-bottom: 32px; }
+    .cover .stats { gap: 24px; margin-bottom: 32px; }
+    .cover .stat-num { font-size: 28px; }
+    .cover .stat-label { font-size: 11px; }
+
+    .top3 { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .top3-card { padding: 16px; }
+    .top3-card img { width: 48px; height: 48px; }
+
+    h2.section-title { font-size: 20px; }
+
+    .rank-table {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .bar-row { flex-wrap: wrap; }
+    .bar-label { width: 100%; text-align: left; padding-right: 0; padding-bottom: 4px; font-size: 12px; }
+    .bar-top1 { display: none; }
+
+    .product-cards { grid-template-columns: 1fr; }
+    .product-card { padding: 14px; gap: 10px; }
+
+    .ai-section h3 { font-size: 17px; }
+    .ai-section { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="cover">
+  <h1>Product Hunt <span class="accent">日报</span></h1>
+  <div class="subtitle">2026-02-25 · 周三</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">40</div><div class="stat-label">Products</div></div>
+    <div class="stat"><div class="stat-num">4,894</div><div class="stat-label">Votes</div></div>
+    <div class="stat"><div class="stat-num">416</div><div class="stat-label">Comments</div></div>
+  </div>
+  <div class="top3">
+    <div class="top3-card">
+      <div class="rank">🥇</div>
+      <img src="https://ph-files.imgix.net/3b92bc7b-bec8-4d79-bc13-605c3732826a.png?auto=format" alt="">
+      <div class="name"><a href="https://www.producthunt.com/r/3UMQDS2622AQCL?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">KiloClaw</a></div>
+      <div class="votes">🔺 931</div>
+      <div class="tagline">Hosted OpenClaw. No Mac mini required.</div>
+    </div>
+<div class="top3-card">
+      <div class="rank">🥈</div>
+      <img src="https://ph-files.imgix.net/ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png?auto=format" alt="">
+      <div class="name"><a href="https://www.producthunt.com/r/JVW32FVUHJJTJU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Notion Custom Agents</a></div>
+      <div class="votes">🔺 407</div>
+      <div class="tagline">Anything you can do in Notion, your Agent can do for you.</div>
+    </div>
+<div class="top3-card">
+      <div class="rank">🥉</div>
+      <img src="https://ph-files.imgix.net/044f9717-be8c-435a-a432-1ccc9806b7a3.png?auto=format" alt="">
+      <div class="name"><a href="https://www.producthunt.com/r/UZOWMTGYKECYVV?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Opal 2.0 by Google Labs </a></div>
+      <div class="votes">🔺 371</div>
+      <div class="tagline">Now with smart agent, memory, routing and interactive chat</div>
+    </div>
+  </div>
+</div>
+<div class="page">
+  <h2 class="section-title">🌟 AI 精选 Top 15</h2>
+  <div class="product-cards">
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/3b92bc7b-bec8-4d79-bc13-605c3732826a.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#1</span>
+          <a href="https://www.producthunt.com/products/kiloclaw/launches/kiloclaw?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">KiloClaw</a>
+          <span class="votes-badge">🔺931</span>
+        </div>
+        <div class="tagline">托管版OpenClaw，免去自部署AI代理的运维烦恼。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#2</span>
+          <a href="https://www.producthunt.com/products/notion/launches/notion-custom-agents?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Notion Custom Agents</a>
+          <span class="votes-badge">🔺407</span>
+        </div>
+        <div class="tagline">在Notion内创建自动执行任务的AI队友。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/044f9717-be8c-435a-a432-1ccc9806b7a3.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#3</span>
+          <a href="https://www.producthunt.com/products/google/launches/opal-2-0-by-google-labs?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Opal 2.0 by Google Labs </a>
+          <span class="votes-badge">🔺371</span>
+        </div>
+        <div class="tagline">谷歌的无代码AI工作流构建器，新增智能代理与记忆功能。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/3356bf00-cd89-47d3-95e2-42bccafbef10.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#4</span>
+          <a href="https://www.producthunt.com/products/arzule/launches/arzule?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Arzule</a>
+          <span class="votes-badge">🔺235</span>
+        </div>
+        <div class="tagline">用AI分析并优化B2B SaaS的合作伙伴收入。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/91c053b0-d70e-4d69-bf9e-8c76bb9e0c4e.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#5</span>
+          <a href="https://www.producthunt.com/products/floors-js/launches/floors-js?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">floors.js</a>
+          <span class="votes-badge">🔺226</span>
+        </div>
+        <div class="tagline">一行代码将网站变成可实时聊天的3D虚拟空间。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/2fdff170-5959-40db-a2f5-53b77951c42b.jpeg?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#6</span>
+          <a href="https://www.producthunt.com/products/fellow-app/launches/ask-fellow-2?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Ask Fellow</a>
+          <span class="votes-badge">🔺195</span>
+        </div>
+        <div class="tagline">自动化处理会前、会中、会后所有事务的AI助手。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/d7a5de78-2369-441a-9bb9-1953fb837b27.jpeg?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#7</span>
+          <a href="https://www.producthunt.com/products/demome/launches/demome-2?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">DemoMe</a>
+          <span class="votes-badge">🔺178</span>
+        </div>
+        <div class="tagline">本地快速将录屏转为精美产品演示视频的工具。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/da302378-a76e-49a3-87c0-0ade33b4760e.jpeg?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#8</span>
+          <a href="https://www.producthunt.com/products/mercury-412/launches/mercury-2?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Mercury 2</a>
+          <span class="votes-badge">🔺152</span>
+        </div>
+        <div class="tagline">采用并行推理扩散技术的高速生产级LLM。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/a6e0d4a4-1440-4e48-8f70-46ed73c68afb.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#9</span>
+          <a href="https://www.producthunt.com/products/vibepad/launches/vibepad?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">VibePad</a>
+          <span class="votes-badge">🔺130</span>
+        </div>
+        <div class="tagline">用游戏手柄控制AI编程助手的开源macOS工具。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/de9f6667-8292-45bb-aa92-61a92b3deed1.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#10</span>
+          <a href="https://www.producthunt.com/products/peonping/launches/peonping?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">PeonPing</a>
+          <span class="votes-badge">🔺121</span>
+        </div>
+        <div class="tagline">为AI编程代理添加游戏音效通知的趣味工具。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/d0974010-1aaa-4300-bfa1-ec3b19bd736a.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#11</span>
+          <a href="https://www.producthunt.com/products/yuma-social-ai/launches/yuma-social-ai?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Yuma Social AI</a>
+          <span class="votes-badge">🔺121</span>
+        </div>
+        <div class="tagline">自动化电商社交媒体评论审核与管理的AI。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/c33a43e3-1e17-412f-a44d-3fef2c78f282.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#12</span>
+          <a href="https://www.producthunt.com/products/orca-3/launches/orca-ceab126e-ea95-4d5c-920b-c054d9948bf3?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Orca</a>
+          <span class="votes-badge">🔺119</span>
+        </div>
+        <div class="tagline">在浏览器中用AI描述即可生成并测试Minecraft模组。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/b0523a00-8479-42da-9b77-6907227af301.svg?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#13</span>
+          <a href="https://www.producthunt.com/products/sf-trip-planner/launches/sf-trip-planner?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">SF Trip Planner</a>
+          <span class="votes-badge">🔺110</span>
+        </div>
+        <div class="tagline">集成犯罪热图的旧金山旅行景点与活动规划地图。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/59d5f661-80bc-4f9d-8447-fc85f1e0df0e.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#14</span>
+          <a href="https://www.producthunt.com/products/draftwise-playbook-studio/launches/draftwise-playbook-studio?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Draftwise Playbook Studio</a>
+          <span class="votes-badge">🔺106</span>
+        </div>
+        <div class="tagline">将法律团队谈判经验自动转化为可执行范本的工具。</div>
+      </div>
+    </div>
+    <div class="product-card">
+      <img src="https://ph-files.imgix.net/f635fa96-5c79-4200-b1d3-432b4c851862.png?auto=format" alt="" class="product-icon">
+      <div class="info">
+        <div class="name">
+          <span class="votes-badge">#15</span>
+          <a href="https://www.producthunt.com/products/mito-health/launches/mito-health-2?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Mito Health</a>
+          <span class="votes-badge">🔺103</span>
+        </div>
+        <div class="tagline">由AI定制个人化血液检测项目并解读的平台。</div>
+      </div>
+    </div>
+  </div>
+</div><div class="page">
+  <h2 class="section-title">📊 分类分布</h2>
+<div class="bar-row">
+    <div class="bar-label">Artificial Intelligence</div>
+    <div class="bar-track"><div class="bar-fill" style="width:100%"></div><div class="bar-value">20个 · 2442票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/JVW32FVUHJJTJU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Notion Custom Agents</a> <span class="bar-top1-votes">🔺407</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Developer Tools</div>
+    <div class="bar-track"><div class="bar-fill" style="width:70%"></div><div class="bar-value">8个 · 1699票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/3UMQDS2622AQCL?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">KiloClaw</a> <span class="bar-top1-votes">🔺931</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Productivity</div>
+    <div class="bar-track"><div class="bar-fill" style="width:51%"></div><div class="bar-value">11个 · 1246票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/JVW32FVUHJJTJU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Notion Custom Agents</a> <span class="bar-top1-votes">🔺407</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Open Source</div>
+    <div class="bar-track"><div class="bar-fill" style="width:43%"></div><div class="bar-value">2个 · 1061票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/3UMQDS2622AQCL?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">KiloClaw</a> <span class="bar-top1-votes">🔺931</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Marketing</div>
+    <div class="bar-track"><div class="bar-fill" style="width:34%"></div><div class="bar-value">8个 · 837票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/S3OS3736RC7KBP?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Arzule</a> <span class="bar-top1-votes">🔺235</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Notion</div>
+    <div class="bar-track"><div class="bar-fill" style="width:17%"></div><div class="bar-value">1个 · 407票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/JVW32FVUHJJTJU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Notion Custom Agents</a> <span class="bar-top1-votes">🔺407</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">SaaS</div>
+    <div class="bar-track"><div class="bar-fill" style="width:17%"></div><div class="bar-value">5个 · 405票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/YA24YPQWQIYDNX?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">floors.js</a> <span class="bar-top1-votes">🔺226</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">iOS</div>
+    <div class="bar-track"><div class="bar-fill" style="width:15%"></div><div class="bar-value">4个 · 372票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/4NB7CSBK2JF7VM?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Thinglo</a> <span class="bar-top1-votes">🔺100</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">GitHub</div>
+    <div class="bar-track"><div class="bar-fill" style="width:11%"></div><div class="bar-value">3个 · 258票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/YHHGOW56BMQX2W?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">PeonPing</a> <span class="bar-top1-votes">🔺121</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">CRM</div>
+    <div class="bar-track"><div class="bar-fill" style="width:10%"></div><div class="bar-value">1个 · 235票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/S3OS3736RC7KBP?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Arzule</a> <span class="bar-top1-votes">🔺235</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Legal</div>
+    <div class="bar-track"><div class="bar-fill" style="width:9%"></div><div class="bar-value">3个 · 217票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/NZXNEVYSYBCX4Y?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Draftwise Playbook Studio</a> <span class="bar-top1-votes">🔺106</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Travel</div>
+    <div class="bar-track"><div class="bar-fill" style="width:8%"></div><div class="bar-value">2个 · 201票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/QHIZWKUDJ7RLTJ?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">SF Trip Planner</a> <span class="bar-top1-votes">🔺110</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Meetings</div>
+    <div class="bar-track"><div class="bar-fill" style="width:8%"></div><div class="bar-value">1个 · 195票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/5J72OZPHEPO43G?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Ask Fellow</a> <span class="bar-top1-votes">🔺195</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Task Management</div>
+    <div class="bar-track"><div class="bar-fill" style="width:8%"></div><div class="bar-value">2个 · 186票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/I3TPVUOQ3JW5WV?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Pinly</a> <span class="bar-top1-votes">🔺97</span></div>
+  </div><div class="bar-row">
+    <div class="bar-label">Design Tools</div>
+    <div class="bar-track"><div class="bar-fill" style="width:7%"></div><div class="bar-value">1个 · 178票</div></div>
+    <div class="bar-top1"><span class="bar-top1-label">TOP1</span> <a href="https://www.producthunt.com/r/DTBYM23U4WWJKS?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">DemoMe</a> <span class="bar-top1-votes">🔺178</span></div>
+  </div></div><div class="page">
+  <h2 class="section-title">🏆 全产品排行榜</h2>
+  <table class="rank-table">
+    <tr><th style="width:28px">#</th><th style="width:28px"></th><th>产品</th><th>简介</th><th style="width:100px">分类</th><th class="r" style="width:38px">票数</th><th class="r" style="width:32px">评论</th></tr>
+    <tr>
+      <td>1</td>
+      <td><img src="https://ph-files.imgix.net/3b92bc7b-bec8-4d79-bc13-605c3732826a.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/3UMQDS2622AQCL?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">KiloClaw</a></td>
+      <td>Hosted OpenClaw. No Mac mini required.</td>
+      <td style="font-size:8px;color:#888">Open Source, Developer Tools</td>
+      <td class="r" style="color:#da552f;font-weight:600">931</td>
+      <td class="r">111</td>
+    </tr>
+<tr>
+      <td>2</td>
+      <td><img src="https://ph-files.imgix.net/ff3e2acf-884a-4f4c-a383-6edfe3de0d88.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/JVW32FVUHJJTJU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Notion Custom Agents</a></td>
+      <td>Anything you can do in Notion, your Agent can</td>
+      <td style="font-size:8px;color:#888">Productivity, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">407</td>
+      <td class="r">6</td>
+    </tr>
+<tr>
+      <td>3</td>
+      <td><img src="https://ph-files.imgix.net/044f9717-be8c-435a-a432-1ccc9806b7a3.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/UZOWMTGYKECYVV?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Opal 2.0 by Google Labs </a></td>
+      <td>Now with smart agent, memory, routing and int</td>
+      <td style="font-size:8px;color:#888">Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">371</td>
+      <td class="r">4</td>
+    </tr>
+<tr>
+      <td>4</td>
+      <td><img src="https://ph-files.imgix.net/3356bf00-cd89-47d3-95e2-42bccafbef10.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/S3OS3736RC7KBP?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Arzule</a></td>
+      <td>Turn partnerships into predictable revenue wi</td>
+      <td style="font-size:8px;color:#888">Marketing, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">235</td>
+      <td class="r">18</td>
+    </tr>
+<tr>
+      <td>5</td>
+      <td><img src="https://ph-files.imgix.net/91c053b0-d70e-4d69-bf9e-8c76bb9e0c4e.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/YA24YPQWQIYDNX?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">floors.js</a></td>
+      <td>Turn your website into Habbo Hotel - one scri</td>
+      <td style="font-size:8px;color:#888">Marketing, SaaS</td>
+      <td class="r" style="color:#da552f;font-weight:600">226</td>
+      <td class="r">26</td>
+    </tr>
+<tr>
+      <td>6</td>
+      <td><img src="https://ph-files.imgix.net/2fdff170-5959-40db-a2f5-53b77951c42b.jpeg?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/5J72OZPHEPO43G?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Ask Fellow</a></td>
+      <td>Automate post-meeting actions from documentat</td>
+      <td style="font-size:8px;color:#888">Productivity, Meetings</td>
+      <td class="r" style="color:#da552f;font-weight:600">195</td>
+      <td class="r">8</td>
+    </tr>
+<tr>
+      <td>7</td>
+      <td><img src="https://ph-files.imgix.net/d7a5de78-2369-441a-9bb9-1953fb837b27.jpeg?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/DTBYM23U4WWJKS?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">DemoMe</a></td>
+      <td>Turn screen recordings into polished demo vid</td>
+      <td style="font-size:8px;color:#888">Design Tools, Marketing</td>
+      <td class="r" style="color:#da552f;font-weight:600">178</td>
+      <td class="r">14</td>
+    </tr>
+<tr>
+      <td>8</td>
+      <td><img src="https://ph-files.imgix.net/da302378-a76e-49a3-87c0-0ade33b4760e.jpeg?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/TA2P65U73N7YYP?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Mercury 2</a></td>
+      <td>Fastest reasoning LLM built for instant produ</td>
+      <td style="font-size:8px;color:#888">API, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">152</td>
+      <td class="r">5</td>
+    </tr>
+<tr>
+      <td>9</td>
+      <td><img src="https://ph-files.imgix.net/a6e0d4a4-1440-4e48-8f70-46ed73c68afb.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/DEX4L6EQZDBIHE?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">VibePad</a></td>
+      <td>Control AI coding assistants with a gamepad f</td>
+      <td style="font-size:8px;color:#888">Open Source, Developer Tools</td>
+      <td class="r" style="color:#da552f;font-weight:600">130</td>
+      <td class="r">8</td>
+    </tr>
+<tr>
+      <td>10</td>
+      <td><img src="https://ph-files.imgix.net/de9f6667-8292-45bb-aa92-61a92b3deed1.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/YHHGOW56BMQX2W?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">PeonPing</a></td>
+      <td>Stop babysitting Claude Code (or Codex, Curso</td>
+      <td style="font-size:8px;color:#888">Productivity, User Experience</td>
+      <td class="r" style="color:#da552f;font-weight:600">121</td>
+      <td class="r">6</td>
+    </tr>
+<tr>
+      <td>11</td>
+      <td><img src="https://ph-files.imgix.net/d0974010-1aaa-4300-bfa1-ec3b19bd736a.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/OX5Z7BFXYVH6NZ?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Yuma Social AI</a></td>
+      <td>Put your ecommerce social media on auto-pilot</td>
+      <td style="font-size:8px;color:#888">SaaS, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">121</td>
+      <td class="r">10</td>
+    </tr>
+<tr>
+      <td>12</td>
+      <td><img src="https://ph-files.imgix.net/c33a43e3-1e17-412f-a44d-3fef2c78f282.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/GBO2RB7T4BRQRW?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Orca</a></td>
+      <td>Play, mod, and host Minecraft from your brows</td>
+      <td style="font-size:8px;color:#888">Artificial Intelligence, Games</td>
+      <td class="r" style="color:#da552f;font-weight:600">119</td>
+      <td class="r">14</td>
+    </tr>
+<tr>
+      <td>13</td>
+      <td><img src="https://ph-files.imgix.net/b0523a00-8479-42da-9b77-6907227af301.svg?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/QHIZWKUDJ7RLTJ?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">SF Trip Planner</a></td>
+      <td>Curated spots, events, crime indicator, all i</td>
+      <td style="font-size:8px;color:#888">Events, Travel</td>
+      <td class="r" style="color:#da552f;font-weight:600">110</td>
+      <td class="r">10</td>
+    </tr>
+<tr>
+      <td>14</td>
+      <td><img src="https://ph-files.imgix.net/59d5f661-80bc-4f9d-8447-fc85f1e0df0e.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/NZXNEVYSYBCX4Y?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Draftwise Playbook Studio</a></td>
+      <td>Analyze your patterns. Capture your edge. Pla</td>
+      <td style="font-size:8px;color:#888">Legal, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">106</td>
+      <td class="r">3</td>
+    </tr>
+<tr>
+      <td>15</td>
+      <td><img src="https://ph-files.imgix.net/f635fa96-5c79-4200-b1d3-432b4c851862.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/R7DTZKZSS72GEO?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Mito Health</a></td>
+      <td>Design Your Own Blood Panel in 60 secs</td>
+      <td style="font-size:8px;color:#888">Health &amp; Fitness, Biohacking</td>
+      <td class="r" style="color:#da552f;font-weight:600">103</td>
+      <td class="r">16</td>
+    </tr>
+<tr>
+      <td>16</td>
+      <td><img src="https://ph-files.imgix.net/378f07b8-67d5-4333-b679-89b60548a6ca.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/4NB7CSBK2JF7VM?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Thinglo</a></td>
+      <td>Save anything from any app — AI-organized, pr</td>
+      <td style="font-size:8px;color:#888">iOS, Productivity</td>
+      <td class="r" style="color:#da552f;font-weight:600">100</td>
+      <td class="r">11</td>
+    </tr>
+<tr>
+      <td>17</td>
+      <td><img src="https://ph-files.imgix.net/68e1d812-4f2f-4459-a532-8ab7e8e561cb.x-icon?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/5IW4QAVFTD43SH?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">The Commuter</a></td>
+      <td>News that reads like a tweet</td>
+      <td style="font-size:8px;color:#888">News, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">100</td>
+      <td class="r">12</td>
+    </tr>
+<tr>
+      <td>18</td>
+      <td><img src="https://ph-files.imgix.net/1187b672-d9ca-4c4d-bdd8-9b0913ba45a4.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/I3TPVUOQ3JW5WV?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Pinly</a></td>
+      <td>Reminders that trigger exactly where you need</td>
+      <td style="font-size:8px;color:#888">iOS, Productivity</td>
+      <td class="r" style="color:#da552f;font-weight:600">97</td>
+      <td class="r">7</td>
+    </tr>
+<tr>
+      <td>19</td>
+      <td><img src="https://ph-files.imgix.net/e88c89b8-6ee0-4d77-8f9c-ad6e9db179da.gif?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/URVSENLCYQCC4T?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Custom Models</a></td>
+      <td>Personalized 3D models for animated travel st</td>
+      <td style="font-size:8px;color:#888">Travel, Photo &amp; Video</td>
+      <td class="r" style="color:#da552f;font-weight:600">91</td>
+      <td class="r">3</td>
+    </tr>
+<tr>
+      <td>20</td>
+      <td><img src="https://ph-files.imgix.net/1414f1cc-45d1-4576-b43f-35923d4185a2.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/4GIPSZH3UQEPZV?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Synlets</a></td>
+      <td>Assign tickets to AI and reduce your backlog</td>
+      <td style="font-size:8px;color:#888">Productivity, Task Management</td>
+      <td class="r" style="color:#da552f;font-weight:600">89</td>
+      <td class="r">3</td>
+    </tr>
+<tr>
+      <td>21</td>
+      <td><img src="https://ph-files.imgix.net/da12879a-baf0-4289-b794-5287a7a1a8aa.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/BUD3FFSOEDTPPH?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Blanc Note</a></td>
+      <td>A quiet home for your thoughts</td>
+      <td style="font-size:8px;color:#888">iOS, Productivity</td>
+      <td class="r" style="color:#da552f;font-weight:600">88</td>
+      <td class="r">8</td>
+    </tr>
+<tr>
+      <td>22</td>
+      <td><img src="https://ph-files.imgix.net/791ab86b-7f7a-45ea-8574-04de95224d7c.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/26PDMZGEVAU7SU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">GhostReply</a></td>
+      <td>AI that texts back for you on iMessage</td>
+      <td style="font-size:8px;color:#888">Messaging, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">87</td>
+      <td class="r">3</td>
+    </tr>
+<tr>
+      <td>23</td>
+      <td><img src="https://ph-files.imgix.net/068e0462-4f22-43a8-9426-7264f9bb134b.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/KQHXCUHBERTDWY?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Thinklet AI </a></td>
+      <td>Voice notes you can chat with.</td>
+      <td style="font-size:8px;color:#888">iOS, Notes</td>
+      <td class="r" style="color:#da552f;font-weight:600">87</td>
+      <td class="r">6</td>
+    </tr>
+<tr>
+      <td>24</td>
+      <td><img src="https://ph-files.imgix.net/0a00ddbe-14fd-43fa-bb63-51eed4ba772b.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/2NUECEF532BD66?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Scenescroll</a></td>
+      <td>Realistic AI UGC video ads that grow your bra</td>
+      <td style="font-size:8px;color:#888">Social Media, Marketing</td>
+      <td class="r" style="color:#da552f;font-weight:600">86</td>
+      <td class="r">4</td>
+    </tr>
+<tr>
+      <td>25</td>
+      <td><img src="https://ph-files.imgix.net/bf44e535-a87e-4585-b3f3-c23ca32624fb.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/EIDKNJXB5ACUPC?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Tadak</a></td>
+      <td>Your Personal White Noise Player</td>
+      <td style="font-size:8px;color:#888">Productivity, Music</td>
+      <td class="r" style="color:#da552f;font-weight:600">85</td>
+      <td class="r">2</td>
+    </tr>
+<tr>
+      <td>26</td>
+      <td><img src="https://ph-files.imgix.net/1460d599-b2b3-46fe-97ee-6fe5716d1ba3.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/725QXXTAESI6AB?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">General Legal</a></td>
+      <td>A lightening fast law firm in your Slack</td>
+      <td style="font-size:8px;color:#888">Legal, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">84</td>
+      <td class="r">5</td>
+    </tr>
+<tr>
+      <td>27</td>
+      <td><img src="https://ph-files.imgix.net/3e7c5280-67a2-4f73-b3c0-bd1ec0dda82a.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/537RK5EAI2FMHA?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">AskAIBase</a></td>
+      <td>Memory infrastructure for AI coding agents</td>
+      <td style="font-size:8px;color:#888">Software Engineering, Developer Tools</td>
+      <td class="r" style="color:#da552f;font-weight:600">84</td>
+      <td class="r">4</td>
+    </tr>
+<tr>
+      <td>28</td>
+      <td><img src="https://ph-files.imgix.net/e4fa9307-d96a-4741-8203-1aaec5c90a6f.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/V3TF4XWSGGR6JU?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">CroozLink</a></td>
+      <td>AI turns your boring links into stories that </td>
+      <td style="font-size:8px;color:#888">Marketing, Artificial Intelligence</td>
+      <td class="r" style="color:#da552f;font-weight:600">40</td>
+      <td class="r">8</td>
+    </tr>
+<tr>
+      <td>29</td>
+      <td><img src="https://ph-files.imgix.net/455df141-466a-4873-86bf-67974b364652.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/EVQSVKGEWQ6HX6?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Simpliers Chat | DM &amp; Comment Ops</a></td>
+      <td>Automate IG DMs and comments without sounding</td>
+      <td style="font-size:8px;color:#888">Sales, Social Media</td>
+      <td class="r" style="color:#da552f;font-weight:600">30</td>
+      <td class="r">15</td>
+    </tr>
+<tr>
+      <td>30</td>
+      <td><img src="https://ph-files.imgix.net/f633fbd5-b0ff-4387-8fd1-12efc4b7f59a.webp?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/RZ6R7BGDVJAC4R?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Free AI Analysis for Google Analytics</a></td>
+      <td>AI that detects marketing optimizations in yo</td>
+      <td style="font-size:8px;color:#888">Analytics, A/B Testing</td>
+      <td class="r" style="color:#da552f;font-weight:600">29</td>
+      <td class="r">3</td>
+    </tr>
+<tr>
+      <td>31</td>
+      <td><img src="https://ph-files.imgix.net/2b51c767-c0fd-444a-bcb2-0f96eed0bd7b.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/FDVWTJBYGNDCE4?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Sitter Rank</a></td>
+      <td>Find trusted local pet sitters - no 20-40% pl</td>
+      <td style="font-size:8px;color:#888">Pets</td>
+      <td class="r" style="color:#da552f;font-weight:600">28</td>
+      <td class="r">5</td>
+    </tr>
+<tr>
+      <td>32</td>
+      <td><img src="https://ph-files.imgix.net/ec1f3273-ff71-4045-bdb8-081031ff9e77.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/LAU3ZLWYBGKIFF?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Chat to Court</a></td>
+      <td>Prepare digital message evidence for court in</td>
+      <td style="font-size:8px;color:#888">Legal</td>
+      <td class="r" style="color:#da552f;font-weight:600">27</td>
+      <td class="r">4</td>
+    </tr>
+<tr>
+      <td>33</td>
+      <td><img src="https://ph-files.imgix.net/f5f4d615-4609-4366-8b20-244eec9558a3.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/7O6BOFWTZ7IMZA?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">IQ | The Vibe Coders Leaderboard</a></td>
+      <td>We make building social</td>
+      <td style="font-size:8px;color:#888">Productivity, GitHub</td>
+      <td class="r" style="color:#da552f;font-weight:600">27</td>
+      <td class="r">9</td>
+    </tr>
+<tr>
+      <td>34</td>
+      <td><img src="https://ph-files.imgix.net/d6c2078c-504e-4f99-af27-5366b6a7895e.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/2HLSUM7MWUBOCX?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">LeadsMint</a></td>
+      <td>Local Leads, Simplified</td>
+      <td style="font-size:8px;color:#888">Sales, Marketing</td>
+      <td class="r" style="color:#da552f;font-weight:600">26</td>
+      <td class="r">2</td>
+    </tr>
+<tr>
+      <td>35</td>
+      <td><img src="https://ph-files.imgix.net/e7123e83-f368-494c-ad16-f540ab6c3bed.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/77MOTLSQXLRLWT?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">convly</a></td>
+      <td>Your Teams messages in Slack</td>
+      <td style="font-size:8px;color:#888">Slack, Productivity</td>
+      <td class="r" style="color:#da552f;font-weight:600">22</td>
+      <td class="r">16</td>
+    </tr>
+<tr>
+      <td>36</td>
+      <td><img src="https://ph-files.imgix.net/6fc7475e-3e46-4f8a-aae7-c5d4b23a9d3d.gif?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/QCKJ66I5GALFUV?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">DayCity</a></td>
+      <td>The world's &quot;now&quot; as living art on your home </td>
+      <td style="font-size:8px;color:#888">Art, Weather</td>
+      <td class="r" style="color:#da552f;font-weight:600">21</td>
+      <td class="r">8</td>
+    </tr>
+<tr>
+      <td>37</td>
+      <td><img src="https://ph-files.imgix.net/08bb976f-cfe3-44cb-b045-e0f34ed26c56.svg?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/3Y6X5FEHKA4RHA?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">ConsentCheck</a></td>
+      <td>Fix Consent Mode v2 Breaks – Free Scanner + W</td>
+      <td style="font-size:8px;color:#888">Marketing, SaaS</td>
+      <td class="r" style="color:#da552f;font-weight:600">17</td>
+      <td class="r">1</td>
+    </tr>
+<tr>
+      <td>38</td>
+      <td><img src="https://ph-files.imgix.net/a23d985f-dc45-4ee1-ab9d-6cb0c6e8e793.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/3Y2XH3GP2JZBO4?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Stanza App</a></td>
+      <td>Offline grammar fixing with one click - Local</td>
+      <td style="font-size:8px;color:#888">Mac, Productivity</td>
+      <td class="r" style="color:#da552f;font-weight:600">15</td>
+      <td class="r">15</td>
+    </tr>
+<tr>
+      <td>39</td>
+      <td><img src="https://ph-files.imgix.net/719ca5e0-9cee-4d29-8e54-9a4d3a99a6c7.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/HV3P5OFWOXYT5E?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">PlatformPilot</a></td>
+      <td>Autonomous agents in the cloud across every d</td>
+      <td style="font-size:8px;color:#888">SaaS, Developer Tools</td>
+      <td class="r" style="color:#da552f;font-weight:600">15</td>
+      <td class="r">2</td>
+    </tr>
+<tr>
+      <td>40</td>
+      <td><img src="https://ph-files.imgix.net/ce062833-1301-4793-86a6-ef1d1a0a62d1.png?auto=format" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle"></td>
+      <td style="font-weight:500"><a href="https://www.producthunt.com/r/HFK2MM4ZDVVDKT?utm_campaign=producthunt-api&amp;utm_medium=api-v2&amp;utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Hicap</a></td>
+      <td>One API for every model. Faster, cheaper infe</td>
+      <td style="font-size:8px;color:#888">API, Developer Tools</td>
+      <td class="r" style="color:#da552f;font-weight:600">14</td>
+      <td class="r">1</td>
+    </tr>
+  </table>
+</div><div class="page">
+  <h2 class="section-title">🤖 AI 趋势洞察</h2>
+  <div class="ai-section">
+    <h3>🔥 值得关注</h3>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/floors-js/launches/floors-js?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">floors.js</a> 以极简方式为静态网站注入沉浸式社交体验，创意十足。</p>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/mercury-412/launches/mercury-2?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Mercury 2</a> 的并行推理架构是LLM速度的突破，直接瞄准生产级AI应用。</p>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/orca-3/launches/orca-ceab126e-ea95-4d5c-920b-c054d9948bf3?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Orca</a> 将AI模组生成与游戏结合，极大降低了UGC创作门槛。</p>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/vibepad/launches/vibepad?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">VibePad</a> 用游戏手柄提升AI编程体验，是极客文化的完美体现。</p>
+    <h3>📈 趋势信号</h3>
+    <p style="padding-left:12px">• <strong>AI代理运维化</strong>：托管服务（如KiloClaw）和垂直应用（如Notion Agents）让AI代理更易用。</p>
+    <p style="padding-left:12px">• <strong>AI体验游戏化</strong>：从音效（PeonPing）到手柄控制（VibePad），开发者正让AI交互更有趣。</p>
+    <p style="padding-left:12px">• <strong>无代码AI工作流深化</strong>：Opal 2.0等工具正从简单自动化走向具备记忆与决策的智能体。</p>
+    <p style="padding-left:12px">• <strong>AI垂直解决方案崛起</strong>：法律（Draftwise）、电商（Yuma）、健康（Mito）等领域的专用AI工具受捧。</p>
+    <h3>⚔️ 竞品对照</h3>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/kiloclaw/launches/kiloclaw?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">KiloClaw</a> vs 自托管OpenClaw — 提供全托管服务，解决部署与运维痛点。</p>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/demome/launches/demome-2?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">DemoMe</a> vs 传统视频编辑器 — 专为产品演示优化，本地处理、速度快、模板精美。</p>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/arzule/launches/arzule?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Arzule</a> vs 传统CRM/电子表格 — 用AI主动分析合作伙伴数据并推荐增收行动。</p>
+    <p style="padding-left:12px">• <a href="https://www.producthunt.com/products/orca-3/launches/orca-ceab126e-ea95-4d5c-920b-c054d9948bf3?utm_campaign=producthunt-api&utm_medium=api-v2&utm_source=Application%3A+product-hunt-api+%28ID%3A+275342%29" class="product-link" target="_blank">Orca</a> vs 传统Minecraft模组开发 — 浏览器内全流程、AI自然语言生成，消除技术障碍。</p>
+    <h3>🛠 Builder 启示</h3>
+    <p style="padding-left:12px">• <strong>解决“最后一公里”问题</strong>：像KiloClaw那样，将热门开源项目转化为易用的托管服务。</p>
+    <p style="padding-left:12px">• <strong>为工作流注入趣味性</strong>：参考PeonPing和VibePad，在工具中融入游戏化元素提升用户粘性。</p>
+    <p style="padding-left:12px">• <strong>深耕垂直场景</strong>：在通用AI能力之上，像Draftwise和Yuma一样构建行业专属的解决方案。</p>
+    <p style="padding-left:12px">• <strong>极致简化用户体验</strong>：学习floors.js，用最少的步骤（一行代码）实现最大的体验变革。</p>
+  </div>
+</div></body></html>

@@ -49,7 +49,7 @@ echo "=========================================="
 # Step 1: Sync config files
 echo "==> Step 1: Syncing files..."
 ssh "$HOST" "sudo mkdir -p $REMOTE_DIR/data $REMOTE_DIR/workflow && sudo chown -R \$(whoami):\$(id -gn) $REMOTE_DIR && sudo chown 1000:1000 $REMOTE_DIR/data"
-scp "$SCRIPT_DIR/docker-compose.yml" "$SCRIPT_DIR/init-data.sh" "$SCRIPT_DIR/weekly-report.mjs" "$HOST:$REMOTE_DIR/"
+scp "$SCRIPT_DIR/docker-compose.yml" "$SCRIPT_DIR/init-data.sh" "$SCRIPT_DIR/weekly-report.mjs" "$SCRIPT_DIR/daily-report.mjs" "$HOST:$REMOTE_DIR/"
 scp "$SCRIPT_DIR/workflow/ph-daily-monitor.json" "$HOST:$REMOTE_DIR/workflow/"
 ssh "$HOST" "chmod +x $REMOTE_DIR/init-data.sh"
 
