@@ -257,8 +257,8 @@ let html = `<!DOCTYPE html>
   .daily-block { margin-bottom: 28px; }
   .daily-block h4 { font-size: 14px; color: #da552f; margin-bottom: 10px; font-weight: 600; letter-spacing: .5px; }
   .daily-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .daily-table th { text-align: left; padding: 10px 14px; font-weight: 600; color: #78716c; border-bottom: 2px solid #e7e5e4; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-  .daily-table td { padding: 12px 14px; border-bottom: 1px solid #f5f5f4; }
+  .daily-table th { text-align: left; padding: 6px 10px; font-weight: 600; color: #78716c; border-bottom: 2px solid #e7e5e4; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+  .daily-table td { padding: 6px 10px; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
   .daily-table .rank-col { width: 40px; text-align: center; color: #a8a29e; font-weight: 700; }
   .daily-table .votes-col { width: 60px; text-align: right; color: #da552f; font-weight: 700; font-size: 15px; }
   .daily-table .topics-col { color: #a8a29e; font-size: 12px; }
@@ -286,7 +286,7 @@ let html = `<!DOCTYPE html>
   /* Full product list (compact) */
   .product-list { width: 100%; border-collapse: collapse; font-size: 13px; }
   .product-list th { text-align: left; padding: 6px 8px; font-weight: 600; color: #78716c; border-bottom: 2px solid #e7e5e4; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
-  .product-list td { padding: 6px 8px; border-bottom: 1px solid #f5f5f4; }
+  .product-list td { padding: 4px 8px; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
   .product-list .r { text-align: right; }
 
   /* Insight box */
@@ -302,9 +302,11 @@ let html = `<!DOCTYPE html>
   /* Rankings table */
   .rank-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .rank-table th { padding: 6px 8px; text-align: left; font-size: 11px; font-weight: 600; color: #78716c; border-bottom: 2px solid #e7e5e4; text-transform: uppercase; letter-spacing: .5px; }
-  .rank-table td { padding: 5px 8px; border-bottom: 1px solid #f5f5f4; }
+  .rank-table td { padding: 4px 8px; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
   .rank-table tr:nth-child(even) { background: #fafaf9; }
   .rank-table .r { text-align: right; }
+
+  .truncate { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   a.product-link { color: inherit; text-decoration: none; border-bottom: 1px solid #e7e5e4; transition: border-color .15s; }
   a.product-link:hover { border-color: #da552f; color: #da552f; }
@@ -429,11 +431,12 @@ for (let i = 0; i < weekDates.length; i++) {
   html += `<div class="daily-block">
     <h4>${dayNames[i]} · ${date}</h4>
     ${top5.length === 0 ? '<p style="color:#888;font-size:10px;">暂无数据</p>' : `<table class="daily-table">
-      <tr><th class="rank-col">#</th><th>产品</th><th>简介</th><th class="topics-col">分类</th><th class="votes-col">票数</th></tr>
+      <tr><th class="rank-col">#</th><th style="width:28px"></th><th>产品</th><th>简介</th><th class="topics-col">分类</th><th class="votes-col">票数</th></tr>
       ${top5.map((p, j) => `<tr>
         <td class="rank-col">${j + 1}</td>
+        <td>${p.thumbnail ? `<img src="${escHtml(p.thumbnail)}" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle">` : ''}</td>
         <td style="font-weight:500"><a href="${escHtml(p.website)}" class="product-link" target="_blank">${escHtml(p.name)}</a></td>
-        <td>${escHtml(p.tagline?.substring(0, 40))}</td>
+        <td class="truncate">${escHtml(p.tagline?.substring(0, 40))}</td>
         <td class="topics-col">${escHtml((p.topics || []).slice(0, 2).join(', '))}</td>
         <td class="votes-col">${p.votesCount}</td>
       </tr>`).join('\n')}
@@ -480,11 +483,12 @@ for (const cat of detailCategories) {
   if (cat.products.length > 5) {
     html += `<h3 class="cat-title">完整列表</h3>
     <table class="product-list">
-      <tr><th style="width:24px">#</th><th>产品</th><th>简介</th><th class="r" style="width:44px">票数</th><th class="r" style="width:44px">评论</th></tr>
+      <tr><th style="width:24px">#</th><th style="width:28px"></th><th>产品</th><th>简介</th><th class="r" style="width:44px">票数</th><th class="r" style="width:44px">评论</th></tr>
       ${cat.products.map((p, i) => `<tr>
         <td>${i + 1}</td>
+        <td>${p.thumbnail ? `<img src="${escHtml(p.thumbnail)}" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle">` : ''}</td>
         <td style="font-weight:500"><a href="${escHtml(p.website)}" class="product-link" target="_blank">${escHtml(p.name)}</a></td>
-        <td>${escHtml(p.tagline?.substring(0, 50))}</td>
+        <td class="truncate">${escHtml(p.tagline?.substring(0, 50))}</td>
         <td class="r" style="color:#da552f">${p.votesCount}</td>
         <td class="r">${p.commentsCount}</td>
       </tr>`).join('\n')}
@@ -511,11 +515,12 @@ for (let pg = 0; pg < totalRankPages; pg++) {
   html += `<div class="page">
     ${pg === 0 ? '<h2 class="section-title">🏆 全产品排行榜</h2>' : `<h3 class="cat-title">全产品排行榜（续 ${pg + 1}/${totalRankPages}）</h3>`}
     <table class="rank-table">
-      <tr><th style="width:28px">#</th><th>产品</th><th>简介</th><th style="width:100px">分类</th><th class="r" style="width:38px">票数</th><th class="r" style="width:32px">评论</th></tr>
+      <tr><th style="width:28px">#</th><th style="width:28px"></th><th>产品</th><th>简介</th><th style="width:100px">分类</th><th class="r" style="width:38px">票数</th><th class="r" style="width:32px">评论</th></tr>
       ${slice.map((p, i) => `<tr>
         <td>${start + i + 1}</td>
+        <td>${p.thumbnail ? `<img src="${escHtml(p.thumbnail)}" alt="" style="width:24px;height:24px;border-radius:5px;object-fit:cover;vertical-align:middle">` : ''}</td>
         <td style="font-weight:500"><a href="${escHtml(p.website)}" class="product-link" target="_blank">${escHtml(p.name)}</a></td>
-        <td>${escHtml(p.tagline?.substring(0, 45))}</td>
+        <td class="truncate">${escHtml(p.tagline?.substring(0, 45))}</td>
         <td style="font-size:8px;color:#888">${escHtml((p.topics || []).slice(0, 2).join(', '))}</td>
         <td class="r" style="color:#da552f;font-weight:600">${p.votesCount}</td>
         <td class="r">${p.commentsCount}</td>
@@ -645,9 +650,110 @@ ${items}
   fs.writeFileSync(weeklyIndexPath, buildIndexHtml(buildItems('')), 'utf-8');
   console.log(`Index regenerated: ${weeklyIndexPath} (${files.length} reports)`);
 
-  // data/index.html (root landing page, links prefixed with weekly-reports/)
+  // data/index.html (root landing page with daily + weekly sections)
   const rootIndexPath = path.join(dataDir, 'index.html');
-  fs.writeFileSync(rootIndexPath, buildIndexHtml(buildItems('weekly-reports/')), 'utf-8');
+  const dailyReportsDir = path.join(dataDir, 'daily-reports');
+  let dailyFiles = [];
+  if (fs.existsSync(dailyReportsDir)) {
+    dailyFiles = fs.readdirSync(dailyReportsDir)
+      .filter(f => /^\d{4}-\d{2}-\d{2}\.html$/.test(f))
+      .sort()
+      .reverse();
+  }
+
+  if (dailyFiles.length > 0) {
+    // Build dual-section root index
+    const dayNames_root = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    function getDayOfWeek(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00Z');
+      return dayNames_root[d.getUTCDay()];
+    }
+    const dailyLatest = dailyFiles.slice(0, 14);
+    const dailyItems = dailyLatest.map(f => {
+      const date = f.replace('.html', '');
+      const dow = getDayOfWeek(date);
+      return `    <li><a href="daily-reports/${f}"><span class="week">${date}</span><span class="date">${dow}</span></a></li>`;
+    }).join('\n');
+    const viewAllLink = dailyFiles.length > 14
+      ? `\n  <p style="margin-top:12px"><a href="daily-reports/index.html" style="color:#da552f;font-size:14px;text-decoration:none">View all ${dailyFiles.length} reports →</a></p>`
+      : '';
+    const weeklyItemsRoot = buildItems('weekly-reports/');
+
+    const rootHtml = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Hunt Reports</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Inter", -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    font-size: 15px; line-height: 1.75; color: #1c1917; background: #fafaf9;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 80px 32px; }
+  h1 {
+    font-family: Georgia, "Noto Serif SC", serif;
+    font-size: 36px; font-weight: 700; color: #1c1917;
+    letter-spacing: -0.5px; margin-bottom: 8px;
+  }
+  h1 .accent { color: #da552f; }
+  .subtitle { font-size: 15px; color: #78716c; margin-bottom: 48px; }
+  h2.section-heading {
+    font-family: Georgia, "Noto Serif SC", serif;
+    font-size: 24px; font-weight: 700; color: #1c1917;
+    margin-bottom: 16px; margin-top: 48px;
+  }
+  h2.section-heading .accent { color: #da552f; }
+  .report-list { list-style: none; }
+  .report-list li {
+    border-bottom: 1px solid #e7e5e4;
+  }
+  .report-list a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; text-decoration: none; color: #1c1917;
+    transition: color 0.15s;
+  }
+  .report-list a:hover { color: #da552f; }
+  .report-list .week {
+    font-family: Georgia, serif;
+    font-size: 17px; font-weight: 600;
+  }
+  .report-list .date {
+    font-size: 13px; color: #a8a29e;
+    font-variant-numeric: tabular-nums;
+  }
+  footer {
+    margin-top: 64px; padding-top: 24px;
+    border-top: 1px solid #e7e5e4;
+    font-size: 12px; color: #a8a29e;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Product Hunt <span class="accent">Reports</span></h1>
+  <p class="subtitle">Daily and weekly trend reports from Product Hunt</p>
+
+  <h2 class="section-heading">📅 <span class="accent">Daily</span> Reports</h2>
+  <ul class="report-list">
+${dailyItems}
+  </ul>${viewAllLink}
+
+  <h2 class="section-heading">📊 <span class="accent">Weekly</span> Reports</h2>
+  <ul class="report-list">
+${weeklyItemsRoot}
+  </ul>
+
+  <footer>Auto-generated by ph-daily-monitor</footer>
+</div>
+</body>
+</html>`;
+    fs.writeFileSync(rootIndexPath, rootHtml, 'utf-8');
+  } else {
+    // No daily reports yet — weekly-only root index
+    fs.writeFileSync(rootIndexPath, buildIndexHtml(buildItems('weekly-reports/')), 'utf-8');
+  }
   console.log(`Root index regenerated: ${rootIndexPath}`);
 }
 regenerateIndex();
